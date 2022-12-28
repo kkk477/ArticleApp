@@ -58,7 +58,5 @@ namespace ArticleApp.Models.Articles
 
             return new PagingResult<Article>(articles, totalRecords);
         }
-
-
     }
 }

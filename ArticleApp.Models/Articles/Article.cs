@@ -1,5 +1,6 @@
 ﻿using Dul.Domain.Common;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ArticleApp.Models.Articles
 {
@@ -18,5 +19,11 @@ namespace ArticleApp.Models.Articles
         /// </summary>
         [Required(ErrorMessage = "제목을 입력하세요.")]
         public string Title { get; set; }
+
+		/// <summary>
+		/// 내용
+		/// </summary>
+		[Required(ErrorMessage = "내용을 입력하세요."), MaxLength(int.MaxValue)]
+		public string Contents { get; set; }
     }
 }

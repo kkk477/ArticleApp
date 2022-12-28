@@ -65,4 +65,7 @@
   <ItemGroup>
     <None Include="ArticleApp.SqlServer.publish.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="ArticleApp.SqlServer.refactorlog" />
+  </ItemGroup>
 </Project>
