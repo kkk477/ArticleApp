@@ -1,5 +1,116 @@
 ﻿@using Dul.Web;
-<h3>ArticlePager</h3>
+<div class="d-flex">
+	<ul class="pagination pagination-sm mx-auto">
+		@if (Model.PageNumber == 1)
+		{
+			<li class="page-item">
+				<a class="page-link disabled"><span style="font-size:7pt;">First</span></a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item">
+				<a class="page-link" @onclick="(() => PagerButtonClicked(1))"><span style="font-size:7pt;">First</span></a>
+			</li>
+		}
+
+		@if (Model.PageNumber > Model.PagerButtonCount)
+		{
+			int prev = (Model.PageNumber - 1) / (int)Model.PagerButtonCount * Model.PagerButtonCount;
+			<li class="page-item">
+				<a class="page-link" @onclick="(() => PagerButtonClicked(prev))"><span style="font-size:7pt;">-@Model.PagerButtonCount</span></a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item">
+				<a class="page-link disabled"><span style="font-size:7pt;">-@Model.PagerButtonCount</span></a>
+			</li>
+		}
+
+		@if (Model.PageNumber > 1)
+		{
+			int prev = Model.PageNumber - 1;
+			<li class="page-item">
+				<a class="page-link" @onclick="(() => PagerButtonClicked(prev))"><span style="font-size:7pt;">Prev</span></a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item">
+				<a class="page-link disabled"><span style="font-size:7pt;">PREV</span></a>
+			</li>
+		}
+
+		@{
+			int i = 0;
+			int start = Model.PageIndex/(int)Model.PagerButtonCount * Model.PagerButtonCount + 1;
+			int end = (Model.PageIndex / (int)Model.PagerButtonCount +1) * Model.PagerButtonCount;
+
+			for (i = start; i <= end; i++)
+			{
+				var currentNumber = i;
+				if (i > Model.PageCount)
+					break;
+
+				if (i == Model.PageNumber)
+				{
+					<li class="page-item active">
+						<a class="page-link disabled"><span style="font-size:7pt;">@i</span></a>
+					</li>
+				}
+				else
+				{
+					<li class="page-item">
+						<a class="page-link" @onclick="(() => PagerButtonClicked(currentNumber))"><span style="font-size:7pt;">@i</span></a>
+					</li>
+				}
+			}
+
+		}
+
+		@if (i <= Model.PageCount)
+		{
+			int next = Model.PageIndex / (int)Model.PagerButtonCount *Model.PagerButtonCount + Model.PagerButtonCount + 1;
+			<li class="page-item">
+				<a class="page-link" @onclick="(() => PagerButtonClicked(next))"><span style="font-size:7pt;">@Model.PagerButtonCount+</span></a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item">
+				<a class="page-link disabled"><span style="font-size:7pt;">@Model.PagerButtonCount+</span></a>
+			</li>
+		}
+
+		@if (Model.PageNumber < Model.PageCount)
+		{
+			int next = Model.PageNumber + 1;
+			<li class="page-item">
+				<a class="page-link" @onclick="(() => PagerButtonClicked(next))"><span style="font-size:7pt;">Next</span></a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item">
+				<a class="page-link disabled"><span style="font-size:7pt;">NEXT</span></a>
+			</li>
+		}
+
+		@if (Model.PageNumber == Model.PageCount)
+		{
+			<li class="page-item">
+				<a class="page-link disabled"><span style="font-size:7pt;">Last</span></a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item">
+				<a class="page-link" @onclick="(() => PagerButtonClicked(Model.PageCount))"><span style="font-size:7pt;">Last</span></a>
+			</li>
+		}
+	</ul>
+</div>
 
 @code {
 	// 부모로부터 모든 페이저 관련된 정보가 담긴 PagerBase 개체 받음
