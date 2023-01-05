@@ -1,5 +1,64 @@
-﻿<h3>ArticleEditorForm</h3>
+﻿@inject IArticleRepository ArticleRepository
+@inject IJSRuntime JSRuntime
 
+<div class="modal" tabindex="-1" id="articleEditDialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">@EditorFormTitle</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<EditForm Model="Model" OnValidSubmit="btnSubmit_Click">
+					<DataAnnotationsValidator></DataAnnotationsValidator>
+					<ValidationSummary></ValidationSummary>
+					<input type="hidden" @bind-value=@Model.Id></input>
+					<div class="form-group">
+						<label for="Title">Title</label>
+						<InputText id="Title" class="form-control" placeholder="Enter Title" @bind-Value="@Model.Title"></InputText>
+						<ValidationMessage For="@(() => Model.Title)" class="form-text text-muted"></ValidationMessage>
+					</div>
+					<div class="form-group">
+						<label for="Contents">Contents</label>
+						<InputTextArea id="Contents" class="form-control" placeholder="Enter Contents" @bind-Value="@Model.Contents"></InputTextArea>
+						<ValidationMessage For="@(() => Model.Contents)" class="form-text text-muted"></ValidationMessage>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">Submit</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
 @code {
+	[Parameter]
+	public RenderFragment EditorFormTitle { get; set; }
 
+	[Parameter]
+	public Article Model { get; set; }
+
+	[Parameter]
+	public Action SaveOrUpdated { get; set; }
+
+	/// <summary>
+	/// 저장 또는 수정 로직
+	/// </summary>
+	private async void btnSubmit_Click()
+	{
+		if (Model.Id == 0)
+		{
+			// 저장
+			await ArticleRepository.AddArticleAsync(Model);
+		}
+		else
+		{
+			await ArticleRepository.EditArticleAsync(Model);
+		}
+
+		await JSRuntime.InvokeAsync<object>("closeModal", "articleEditDialog");
+
+		SaveOrUpdated?.Invoke();	// 넘어온 함수 포인터를 실행
+	}
 }

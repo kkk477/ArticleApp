@@ -1,7 +1,7 @@
 ﻿@page "/Articles/Manage"
 
 @inject IArticleRepository ArticleRepository
-@inject IJSRuntime JSRunTime
+@inject IJSRuntime JSRuntime
 
 @using Dul.Domain.Common;
 @using Dul.Web
@@ -10,7 +10,8 @@
 
 
 <div>
-	<a href="/Articles/Create" class="btn btn-primary">Create</a>
+	<a href="/Articles/Create" class="btn btn-primary">Create(Page)</a>
+	<input type="button" value="Create(Modal)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#articleEditDialog" @onclick="btnCreate_Click"></input>
 </div>
 
 @if (articles == null)
@@ -27,7 +28,8 @@ else
 				<th>Created</th>
 				<th>&nbsp;</th>
 				<th>IsPinned</th>
-				<th>&nbsp;</th>
+				<th>Edit</th>
+				<th>Delete</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -42,9 +44,15 @@ else
 						<a href="/Articles/Edit/@article.Id" class="btn btn-light">Edit</a>
 						<a href="/Articles/Delete/@article.Id" class="btn btn-danger">Delete</a>
 					</td>
-					<td>@(article.IsPinned? "공지" : "")</td>
+					<td>@(article.IsPinned ? "공지" : "")</td>
 					<td>
 						<input type="button" value="공지글로 올리기" class="btn btn-light" @onclick="(() => PinnedBy(article))"></input>
+					</td>
+					<td>
+						<input type="button" value="Edit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#articleEditDialog" @onclick="(() => EditedBy(article))"></input>
+					</td>
+					<td>
+						<input type="button" value="Delete" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#articleDeleteDialog" @onclick="(() => DeleteBy(article))"></input>
 					</td>
 				</tr>
 			}
@@ -53,6 +61,12 @@ else
 }
 
 <ArticleApp.Pages.Articles.Component.ArticlePager Model="pagerBase" PageIndexChanged="PageIndexChanged"></ArticleApp.Pages.Articles.Component.ArticlePager>
+
+<ArticleApp.Pages.Articles.Component.ArticleDeleteDialog OnClick="btnDelete_Click"></ArticleApp.Pages.Articles.Component.ArticleDeleteDialog>
+
+<ArticleApp.Pages.Articles.Component.ArticleEditorForm Model="_article" SaveOrUpdated="SaveOrUpdated">
+	<EditorFormTitle>@editorFormTitle</EditorFormTitle>
+</ArticleApp.Pages.Articles.Component.ArticleEditorForm>
 
 @if (isShow)
 {
@@ -76,6 +90,50 @@ else
 }
 
 @code {
+	private void btnCreate_Click()
+	{
+		editorFormTitle = "글쓰기";
+		_article = new Article(); // 모델 클리어
+	}
+
+	private string editorFormTitle = "";
+
+	private void EditedBy(Article article)
+	{
+		editorFormTitle = "수정하기";
+		_article = article;
+	}
+
+	/// <summary>
+	/// 저장 또는 수정 후 데이터 다시 읽어오기
+	/// </summary>
+	private async void SaveOrUpdated()
+	{
+		var pagingData = await ArticleRepository.GetAllAsync(pagerBase.PageIndex, pagerBase.PageSize);
+		pagerBase.RecordCount = pagingData.TotalRecords;
+		articles = pagingData.Records.ToList();
+
+		StateHasChanged();
+	}
+
+	private async void btnDelete_Click()
+	{
+		await ArticleRepository.DeleteArticleAsync(_article.Id);
+		await JSRuntime.InvokeAsync<object>("closeModal", "articleDeleteDialog");
+		_article = new Article();
+
+		var pagingData = await ArticleRepository.GetAllAsync(pagerBase.PageIndex, pagerBase.PageSize);
+		pagerBase.RecordCount = pagingData.TotalRecords;
+		articles = pagingData.Records.ToList();
+
+		StateHasChanged();
+	}
+
+	private void DeleteBy(Article article)
+	{
+		_article = article;
+	}
+
 	private Article _article = new Article();   // 선택한 항목 관리
 
 	private bool isShow = false;    // Notice Modal
