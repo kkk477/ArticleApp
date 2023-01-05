@@ -73,7 +73,7 @@ else
 	private async void PageIndexChanged(int PageIndex)
 	{
 		pagerBase.PageIndex = PageIndex;
-		pagerBase.PageNumber = PageIndex - 1;
+		pagerBase.PageNumber = PageIndex + 1;
 
 		var pagingData = await ArticleRepository.GetAllAsync(pagerBase.PageIndex, pagerBase.PageSize);
 		pagerBase.RecordCount = pagingData.TotalRecords;    // 총 레코드 수

@@ -1,6 +1,7 @@
 ﻿@using Dul.Web;
 <div class="d-flex">
 	<ul class="pagination pagination-sm mx-auto">
+		@*맨 처음으로*@
 		@if (Model.PageNumber == 1)
 		{
 			<li class="page-item">
@@ -14,6 +15,22 @@
 			</li>
 		}
 
+		@*이전*@
+		@if (Model.PageNumber > 1)
+		{
+			int prev = Model.PageNumber - 1;
+			<li class="page-item">
+				<a class="page-link" @onclick="(() => PagerButtonClicked(prev))"><span style="font-size:7pt;">Prev</span></a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item">
+				<a class="page-link disabled"><span style="font-size:7pt;">Prev</span></a>
+			</li>
+		}
+
+		@*이전 버튼 3개*@
 		@if (Model.PageNumber > Model.PagerButtonCount)
 		{
 			int prev = (Model.PageNumber - 1) / (int)Model.PagerButtonCount * Model.PagerButtonCount;
@@ -28,24 +45,10 @@
 			</li>
 		}
 
-		@if (Model.PageNumber > 1)
-		{
-			int prev = Model.PageNumber - 1;
-			<li class="page-item">
-				<a class="page-link" @onclick="(() => PagerButtonClicked(prev))"><span style="font-size:7pt;">Prev</span></a>
-			</li>
-		}
-		else
-		{
-			<li class="page-item">
-				<a class="page-link disabled"><span style="font-size:7pt;">PREV</span></a>
-			</li>
-		}
-
 		@{
 			int i = 0;
-			int start = Model.PageIndex/(int)Model.PagerButtonCount * Model.PagerButtonCount + 1;
-			int end = (Model.PageIndex / (int)Model.PagerButtonCount +1) * Model.PagerButtonCount;
+			int start = (Model.PageIndex / (int)Model.PagerButtonCount * Model.PagerButtonCount) + 1;
+			int end = (Model.PageIndex / (int)Model.PagerButtonCount + 1) * Model.PagerButtonCount;
 
 			for (i = start; i <= end; i++)
 			{
@@ -69,9 +72,10 @@
 
 		}
 
+		@*다음 버튼 3개*@
 		@if (i <= Model.PageCount)
 		{
-			int next = Model.PageIndex / (int)Model.PagerButtonCount *Model.PagerButtonCount + Model.PagerButtonCount + 1;
+			int next = (Model.PageIndex / (int)Model.PagerButtonCount * Model.PagerButtonCount + Model.PagerButtonCount) + 1;
 			<li class="page-item">
 				<a class="page-link" @onclick="(() => PagerButtonClicked(next))"><span style="font-size:7pt;">@Model.PagerButtonCount+</span></a>
 			</li>
@@ -83,6 +87,7 @@
 			</li>
 		}
 
+		@*다음*@
 		@if (Model.PageNumber < Model.PageCount)
 		{
 			int next = Model.PageNumber + 1;
@@ -93,10 +98,11 @@
 		else
 		{
 			<li class="page-item">
-				<a class="page-link disabled"><span style="font-size:7pt;">NEXT</span></a>
+				<a class="page-link disabled"><span style="font-size:7pt;">Next</span></a>
 			</li>
 		}
 
+		@*맨 뒤로*@
 		@if (Model.PageNumber == Model.PageCount)
 		{
 			<li class="page-item">
@@ -135,6 +141,6 @@
 		Model.PageNumber = pageNumber;
 		Model.PageIndex = pageNumber - 1;
 
-		await PageIndexChanged.InvokeAsync(pageNumber);
+		await PageIndexChanged.InvokeAsync(Model.PageIndex);
 	}
 }
