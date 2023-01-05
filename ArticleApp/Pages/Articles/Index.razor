@@ -2,6 +2,7 @@
 @page "/Articles/Index"
 
 @inject IArticleRepository ArticleRepository
+@inject NavigationManager NavigationManager
 
 @using Dul.Domain.Common;
 @using Dul.Web
@@ -40,7 +41,11 @@ else
 			{
 				<tr>
 					<td>@article.Id</td>
-					<td>@article.Title</td>
+					<td @onclick="(()=>btnTitle_Click(article.Id))">
+						<a href="/Articles/Details/@article.Id">
+							@article.Title
+						</a>
+					</td>
 					<td>@article.Created.ToShortTimeString()</td>
 					<td>
 						<a href="/Articles/Details/@article.Id" class="btn btn-light">Details</a>
@@ -56,15 +61,19 @@ else
 <ArticleApp.Pages.Articles.Component.ArticlePager Model="pagerBase" PageIndexChanged="PageIndexChanged"></ArticleApp.Pages.Articles.Component.ArticlePager>
 
 @code {
+	private void btnTitle_Click(int id)
+	{
+		NavigationManager.NavigateTo($"/Articles/Details/{id}");
+	}
 	// 페이저 기본값 설정
 	PagerBase pagerBase = new PagerBase()
-	{
-		PageNumber = 1,
-		PageIndex = 0,
-		PageSize = 2,
-		PageCount = 5,
-		PagerButtonCount = 3,
-	};
+		{
+			PageNumber = 1,
+			PageIndex = 0,
+			PageSize = 2,
+			PageCount = 5,
+			PagerButtonCount = 3,
+		};
 
 	private List<Article> articles;
 
