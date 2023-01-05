@@ -8,7 +8,17 @@
 
 <h3>Index</h3>
 
-<div><a href="/Articles/Create" class="btn btn-primary">Create</a></div>
+<div>
+	<a href="/Articles/Create" class="btn btn-primary">Create</a>
+	<AuthorizeView Roles="Administrators, Managers">
+		<Authorized>
+
+		</Authorized>
+		<NotAuthorized>
+			<a href="/Articles/Manage" class="btn btn-primary">Manage</a>
+		</NotAuthorized>
+	</AuthorizeView>
+</div>
 
 @if (articles == null)
 {
@@ -66,7 +76,7 @@ else
 		//[2] 페이징 처리된 데이터만 출력
 		PagingResult<Article> pagingData = await ArticleRepository.GetAllAsync(pagerBase.PageIndex, pagerBase.PageSize);
 		pagerBase.RecordCount = pagingData.TotalRecords;    // 총 레코드 수
-		articles = pagingData.Records.ToList();	// 페이징 처리된 레코드
+		articles = pagingData.Records.ToList(); // 페이징 처리된 레코드
 	}
 
 	// Pager 버튼 클릭 콜백 메서드
@@ -78,6 +88,6 @@ else
 		var pagingData = await ArticleRepository.GetAllAsync(pagerBase.PageIndex, pagerBase.PageSize);
 		pagerBase.RecordCount = pagingData.TotalRecords;    // 총 레코드 수
 		articles = pagingData.Records.ToList(); // 페이징 처리된 레코드
-		StateHasChanged();	// 현재 컴포넌트 재로드
+		StateHasChanged();  // 현재 컴포넌트 재로드
 	}
 }

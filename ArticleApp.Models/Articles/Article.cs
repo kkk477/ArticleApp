@@ -25,5 +25,10 @@ namespace ArticleApp.Models.Articles
 		/// </summary>
 		[Required(ErrorMessage = "내용을 입력하세요."), MaxLength(int.MaxValue)]
 		public string Contents { get; set; }
+
+        /// <summary>
+        /// 공지글로 올리기
+        /// </summary>
+        public bool IsPinned { get; set; } = false;
     }
 }
